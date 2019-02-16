@@ -5,12 +5,13 @@ import plyvel
 import zstandard as zstd
 import replacer
 import time
+import pyshoco
 
 if len(sys.argv) < 2:
     print('Usage: {} archive [archive2] ...'.format(sys.argv[0]))
     exit(1)
 
-dbLocation = '/home/optixal/Documents/github/Occulto/TestDB/'
+dbLocation = '/home/optixal/Apps/Occulto/TestDB/'
 db = plyvel.DB(dbLocation, create_if_missing=True)
 batch = db.write_batch()
 decompressor = zstd.ZstdDecompressor()
@@ -58,6 +59,7 @@ for archive in sys.argv[1:]:
 
                 username = username.lower() # assumes all usernames/emails are case insensitive
                 username = replacer.compress(username)
+                username = pyshoco.compress(username) # flash compress
 
                 passwordsInBuffer = buffer.get(username) # returns list of passwords
                 if passwordsInBuffer: # db has already queried for this batch block and results exists in buffer
@@ -68,6 +70,7 @@ for archive in sys.argv[1:]:
                 else:
                     passwordsInDB = db.get(username) # returns single password delimeted with '\x00'
                     if passwordsInDB:
+                        # passwordsInDB = pyshoco.decompress(passwordsInDB).encode()
                         passwordsInDB = passwordsInDB.split(b'\x00')
                         if password in passwordsInDB: # skip if password already in DB
                             skipCount += 1
@@ -89,6 +92,7 @@ for archive in sys.argv[1:]:
 
         for username, passwords in buffer.items():
             batch.put(username, b'\x00'.join(passwords))
+            # batch.put(username, pyshoco.compress(b'\x01'.join(passwords)))
         buffer = {}
         batch.write()
         batch.clear()
