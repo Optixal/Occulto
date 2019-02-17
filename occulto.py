@@ -10,7 +10,7 @@ if len(sys.argv) < 2:
     exit(1)
 
 # dbLocation = '/home/optixal/Documents/github/Occulto/TestDB/'
-dbLocation = '/home/optixal/Apps/Occulto/TestDB/'
+dbLocation = '/home/optixal/Documents/github/Occulto/TestDB/'
 db = plyvel.DB(dbLocation, create_if_missing=False)
 
 def getPasswords(username, db):

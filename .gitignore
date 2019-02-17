@@ -1,5 +1,4 @@
 env/
 *.zst
 __pycache__/
-*.txt
 *DB/

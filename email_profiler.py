@@ -7,7 +7,7 @@ import struct
 domains = {}
 blockSize = 4096
 saved = None
-domainID = 0
+domainID = 1
 
 for archive in sys.argv[1:]:
     with open(archive, 'rb') as f:
@@ -36,7 +36,7 @@ for archive in sys.argv[1:]:
 
 sdomains = sorted(domains.items(), key=lambda x: x[1], reverse=True)
 print('replacements = {')
-for domain, count in sdomains[:256]:
+for domain, count in sdomains[:255]:
     print("    {:26} : {:8}, # {:3} : {}".format(str(domain), str(struct.pack('B', domainID)), str(domainID), count))
     domainID += 1
 print('}')
